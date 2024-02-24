@@ -1,0 +1,830 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fav.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Oliver">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="题目链接 | 第 41 场双周赛 | Q4 | 难度:2610                题目描述   你有一辆货运卡车，你需要用这一辆车把一些箱子从仓库运送到码头。这辆卡车每次运输有 箱子数目的限制 和 总重量的限制 。  给你一个箱子数组 boxes 和三个整数 portsCount, maxBoxes 和 maxWeight ，其中 boxes[i] &#x3D; [po">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LC.1687从仓库到码头运输箱子">
+<meta property="og:url" content="https://oliverchao.github.io/2022/12/06/LC-1687%E4%BB%8E%E4%BB%93%E5%BA%93%E5%88%B0%E7%A0%81%E5%A4%B4%E8%BF%90%E8%BE%93%E7%AE%B1%E5%AD%90/index.html">
+<meta property="og:site_name" content="Oliver">
+<meta property="og:description" content="题目链接 | 第 41 场双周赛 | Q4 | 难度:2610                题目描述   你有一辆货运卡车，你需要用这一辆车把一些箱子从仓库运送到码头。这辆卡车每次运输有 箱子数目的限制 和 总重量的限制 。  给你一个箱子数组 boxes 和三个整数 portsCount, maxBoxes 和 maxWeight ，其中 boxes[i] &#x3D; [po">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-06T01:06:03.000Z">
+<meta property="article:modified_time" content="2024-02-10T12:37:17.486Z">
+<meta property="article:author" content="Oliver">
+<meta property="article:tag" content="动态规划">
+<meta property="article:tag" content="单调队列">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>LC.1687从仓库到码头运输箱子 - Oliver</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"oliverchao.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Oliver&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="LC.1687从仓库到码头运输箱子"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        Oliver
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-06 09:06" pubdate>
+          2022年12月6日
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">LC.1687从仓库到码头运输箱子</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年2月10日
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <div class="note note-primary">
+            <p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/delivering-boxes-from-storage-to-ports/description/">题目链接</a> | <a target="_blank" rel="noopener" href="https://leetcode.cn/contest/biweekly-contest-41">第 41 场双周赛</a> | <a target="_blank" rel="noopener" href="https://leetcode.cn/contest/biweekly-contest-41/problems/delivering-boxes-from-storage-to-ports/">Q4</a> | 难度:2610</p>
+          </div>
+
+<details >
+  <summary>题目描述</summary>
+
+
+<p>你有一辆货运卡车，你需要用这一辆车把一些箱子从仓库运送到码头。这辆卡车每次运输有 <strong>箱子数目的限制</strong> 和 <strong>总重量的限制</strong> 。</p>
+
+<p>给你一个箱子数组 <code>boxes</code> 和三个整数 <code>portsCount</code>, <code>maxBoxes</code> 和 <code>maxWeight</code> ，其中 <code>boxes[i] = [ports<sub>​​i</sub>​, weight<sub>i</sub>]</code> 。</p>
+
+<ul>
+    <li><code>ports<sub>​​i</sub></code> 表示第 <code>i</code> 个箱子需要送达的码头， <code>weights<sub>i</sub></code> 是第 <code>i</code> 个箱子的重量。</li>
+    <li><code>portsCount</code> 是码头的数目。</li>
+    <li><code>maxBoxes</code> 和 <code>maxWeight</code> 分别是卡车每趟运输箱子数目和重量的限制。</li>
+</ul>
+
+<p>箱子需要按照 <strong>数组顺序</strong> 运输，同时每次运输需要遵循以下步骤：</p>
+
+<ul>
+    <li>卡车从 <code>boxes</code> 队列中按顺序取出若干个箱子，但不能违反 <code>maxBoxes</code> 和 <code>maxWeight</code> 限制。</li>
+    <li>对于在卡车上的箱子，我们需要 <strong>按顺序</strong> 处理它们，卡车会通过 <strong>一趟行程</strong> 将最前面的箱子送到目的地码头并卸货。如果卡车已经在对应的码头，那么不需要 <strong>额外行程</strong> ，箱子也会立马被卸货。</li>
+    <li>卡车上所有箱子都被卸货后，卡车需要 <strong>一趟行程</strong> 回到仓库，从箱子队列里再取出一些箱子。</li>
+</ul>
+
+<p>卡车在将所有箱子运输并卸货后，最后必须回到仓库。</p>
+
+<p>请你返回将所有箱子送到相应码头的 <b>最少行程</b> 次数。</p>
+
+<p> </p>
+
+<p><strong>示例 1：</strong></p>
+
+<pre><strong>输入：</strong>boxes = [[1,1],[2,1],[1,1]], portsCount = 2, maxBoxes = 3, maxWeight = 3
+<b>输出：</b>4
+<b>解释：</b>最优策略如下：
+- 卡车将所有箱子装上车，到达码头 1 ，然后去码头 2 ，然后再回到码头 1 ，最后回到仓库，总共需要 4 趟行程。
+所以总行程数为 4 。
+注意到第一个和第三个箱子不能同时被卸货，因为箱子需要按顺序处理（也就是第二个箱子需要先被送到码头 2 ，然后才能处理第三个箱子）。
+</pre>
+
+<p><strong>示例 2：</strong></p>
+
+<pre><b>输入：</b>boxes = [[1,2],[3,3],[3,1],[3,1],[2,4]], portsCount = 3, maxBoxes = 3, maxWeight = 6
+<b>输出：</b>6
+<b>解释：</b>最优策略如下：
+- 卡车首先运输第一个箱子，到达码头 1 ，然后回到仓库，总共 2 趟行程。
+- 卡车运输第二、第三、第四个箱子，到达码头 3 ，然后回到仓库，总共 2 趟行程。
+- 卡车运输第五个箱子，到达码头 3 ，回到仓库，总共 2 趟行程。
+总行程数为 2 + 2 + 2 = 6 。
+</pre>
+
+<p><strong>示例 3：</strong></p>
+
+<pre><b>输入：</b>boxes = [[1,4],[1,2],[2,1],[2,1],[3,2],[3,4]], portsCount = 3, maxBoxes = 6, maxWeight = 7
+<b>输出：</b>6
+<b>解释：</b>最优策略如下：
+- 卡车运输第一和第二个箱子，到达码头 1 ，然后回到仓库，总共 2 趟行程。
+- 卡车运输第三和第四个箱子，到达码头 2 ，然后回到仓库，总共 2 趟行程。
+- 卡车运输第五和第六个箱子，到达码头 3 ，然后回到仓库，总共 2 趟行程。
+总行程数为 2 + 2 + 2 = 6 。
+</pre>
+
+<p><strong>示例 4：</strong></p>
+
+<pre><b>输入：</b>boxes = [[2,4],[2,5],[3,1],[3,2],[3,7],[3,1],[4,4],[1,3],[5,2]], portsCount = 5, maxBoxes = 5, maxWeight = 7
+<b>输出：</b>14
+<b>解释：</b>最优策略如下：
+- 卡车运输第一个箱子，到达码头 2 ，然后回到仓库，总共 2 趟行程。
+- 卡车运输第二个箱子，到达码头 2 ，然后回到仓库，总共 2 趟行程。
+- 卡车运输第三和第四个箱子，到达码头 3 ，然后回到仓库，总共 2 趟行程。
+- 卡车运输第五个箱子，到达码头 3 ，然后回到仓库，总共 2 趟行程。
+- 卡车运输第六和第七个箱子，到达码头 3 ，然后去码头 4 ，然后回到仓库，总共 3 趟行程。
+- 卡车运输第八和第九个箱子，到达码头 1 ，然后去码头 5 ，然后回到仓库，总共 3 趟行程。
+总行程数为 2 + 2 + 2 + 2 + 3 + 3 = 14 。
+</pre>
+
+<p> </p>
+
+<p><strong>提示：</strong></p>
+
+<ul>
+    <li><code>1 &lt;= boxes.length &lt;= 10<sup>5</sup></code></li>
+    <li><code>1 &lt;= portsCount, maxBoxes, maxWeight &lt;= 10<sup>5</sup></code></li>
+    <li><code>1 &lt;= ports<sub>​​i</sub> &lt;= portsCount</code></li>
+    <li><code>1 &lt;= weights<sub>i</sub> &lt;= maxWeight</code></li>
+</ul>
+
+
+</details>
+
+<h2 id="题目解析"><a href="#题目解析" class="headerlink" title="题目解析"></a>题目解析</h2><p>这道题难度还是蛮大的, 关键点在于想到动态规划并且需要使用手段优化其状态转移方程.</p>
+<p>我们定义$f[i]$为运送前$i$个箱子需要的最小行程数.<br>首先需要想到一个$O(n^2)$的解:<br>$$<br>f[i] &#x3D; min(f[j]+cost(j+1,i))+2<br>$$</p>
+<blockquote>
+<p>意义就是从$i$ 之前找到一个$j$, 在$f[j]$的基础上 在运送$[j+1,i]$的箱子. 当然, $[j+1,i]$需要满足两个限制, 一是数目, 二是重量. 计算数量可以直接使用下标相减, 计算重量可以使用前缀和.</p>
+</blockquote>
+<h3 id="1-如何求cost函数"><a href="#1-如何求cost函数" class="headerlink" title="1.如何求cost函数"></a>1.如何求cost函数</h3><p>我们定义$neg$数组, $neg[i]$代表前$i$个箱子中, 有多少个交替不同量. 比如<code>1112</code>中$neg[3]&#x3D;2$, 因为$1\ne 2$. 这样就可以用前缀和的思想处理$[j+1, i]$的$cost$.<br>$$<br>cost(j+1, i) &#x3D; neg[i] - neg[j+1]<br>$$</p>
+<h3 id="2-如何优化状态转移方程"><a href="#2-如何优化状态转移方程" class="headerlink" title="2.如何优化状态转移方程"></a>2.如何优化状态转移方程</h3><p>把$cost$带入到状态转移方程中</p>
+<!-- f[i] = min(f[j]+neg[i]-neg[j+1])+2\\ -->
+<!-- =min(f[j]-neg[j+1]) + neg[i]+2  -->
+<!-- \begin{array}{l} -->
+<!-- x &= v_0\cos\theta t\\ -->
+<!-- y &= v_0\sin\theta t - \frac{1}{2}gt^2 -->
+<!-- \end{array} -->
+<p>$$<br>\begin{align}<br>f[i]&amp;&#x3D;\min (f[j]+n e g[i]-n e g[j+1])+2 \\<br>    &amp;&#x3D;\min (f[j]-n e g[j+1])+n e g[i]+2<br>\end{align}<br>$$<br><font color=#a64942 size=4>可以发现, 在找$j$的时候,我们可以消掉很多状态转移图中的无用的边, 只需要找到最合适的$j$即可</font></p>
+<p class="note note-success">这个过程可以使用堆/平衡树/单调队列</p>
+
+<h3 id="3-重新定义-f-的索引"><a href="#3-重新定义-f-的索引" class="headerlink" title="3. 重新定义$f$的索引"></a>3. 重新定义$f$的索引</h3><p>有时候在定义状态转移方程的时候, 可以定义为以 <strong>1.第$i$个元素结尾</strong>, 或者 <strong>2.处理前$i$ 个元素</strong>. 因为索引是从0开始的, 所以上述两种方式是索引相差1. </p>
+<blockquote>
+<p>这里可以有一个比较通用的方式: 能不能不用索引$0$元素. 如果发状态转移的时候, 往前边找$j$, 如果$j$,最少最少是从0开始, 那么可以定义 方式1. 如果$j$可以在往前, 就是可以不用索引$0$元素. 那么只能定义2. 因为索引不能是负数.<br><font color=#a64942 size=4>这里需要定义2. 因为, $j$可以不使用元素0, 即$[0, i]$箱子一次运完</font></p>
+</blockquote>
+<p class="note note-primary">所以f这里定义的是处理前i个箱子</p>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><div>
+            <input type="checkbox"  checked="checked">堆
+          </div>
+<div>
+            <input type="checkbox"  checked="checked">单调队列
+          </div>
+<div>
+            <input type="checkbox"  >平衡树
+          </div>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 堆</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boxDelivering</span><span class="hljs-params">(boxes [][]<span class="hljs-type">int</span>, portsCount <span class="hljs-type">int</span>, maxBoxes <span class="hljs-type">int</span>, maxWeight <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>	n := <span class="hljs-built_in">len</span>(boxes)<br>	w := <span class="hljs-built_in">make</span>([]<span class="hljs-type">int</span>, n+<span class="hljs-number">1</span>)<br>	neg := <span class="hljs-built_in">make</span>([]<span class="hljs-type">int</span>, n)<br>	<span class="hljs-keyword">for</span> i, v := <span class="hljs-keyword">range</span> boxes &#123;<br>		w[i+<span class="hljs-number">1</span>] = w[i] + v[<span class="hljs-number">1</span>]<br>		<span class="hljs-keyword">if</span> i &gt; <span class="hljs-number">0</span> &#123;<br>			neg[i] = neg[i<span class="hljs-number">-1</span>]<br>			<span class="hljs-keyword">if</span> v[<span class="hljs-number">0</span>] != boxes[i<span class="hljs-number">-1</span>][<span class="hljs-number">0</span>] &#123;<br>				neg[i]++<br>			&#125;<br>		&#125;<br>	&#125;<br><br>	f := <span class="hljs-built_in">make</span>([]<span class="hljs-type">int</span>, n+<span class="hljs-number">1</span>)<br>	g := <span class="hljs-built_in">make</span>(hp, <span class="hljs-number">0</span>, n+<span class="hljs-number">1</span>)<br>	g = <span class="hljs-built_in">append</span>(g, node&#123;<span class="hljs-number">0</span>, <span class="hljs-number">0</span>&#125;)<br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">1</span>; i &lt;= n; i++ &#123;<br>		<span class="hljs-keyword">for</span> g.Len() &gt; <span class="hljs-number">0</span> &amp;&amp; (i-g[<span class="hljs-number">0</span>].j &gt; maxBoxes || w[i]-w[g[<span class="hljs-number">0</span>].j] &gt; maxWeight) &#123;<br>			heap.Pop(&amp;g)<br>		&#125;<br>		p := g[<span class="hljs-number">0</span>]<br>		f[i] = f[p.j] - neg[p.j] + neg[i<span class="hljs-number">-1</span>] + <span class="hljs-number">2</span><br>		<span class="hljs-keyword">if</span> i &lt; n &#123;<br>			heap.Push(&amp;g, node&#123;i, f[i] - neg[i]&#125;)<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> f[n]<br>&#125;<br><br><span class="hljs-comment">// 堆模板</span><br><span class="hljs-keyword">type</span> (<br>	node <span class="hljs-keyword">struct</span>&#123; j, cost <span class="hljs-type">int</span> &#125;<br>	hp   []node<br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h hp)</span></span> Len() <span class="hljs-type">int</span>              &#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(h) &#125;<br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h hp)</span></span> Less(i, j <span class="hljs-type">int</span>) <span class="hljs-type">bool</span>    &#123; <span class="hljs-keyword">return</span> h[i].cost &lt; h[j].cost &#125; <span class="hljs-comment">// &gt; means maximum heap</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h hp)</span></span> Swap(i, j <span class="hljs-type">int</span>)         &#123; h[i], h[j] = h[j], h[i] &#125;<br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h *hp)</span></span> Push(v <span class="hljs-keyword">interface</span>&#123;&#125;)   &#123; *h = <span class="hljs-built_in">append</span>(*h, v.(node)) &#125;<br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h *hp)</span></span> Pop() (v <span class="hljs-keyword">interface</span>&#123;&#125;) &#123; a := *h; *h, v = a[:<span class="hljs-built_in">len</span>(a)<span class="hljs-number">-1</span>], a[<span class="hljs-built_in">len</span>(a)<span class="hljs-number">-1</span>]; <span class="hljs-keyword">return</span> &#125;<br></code></pre></td></tr></table></figure>
+
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 单调队列</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">boxDelivering</span><span class="hljs-params">(boxes [][]<span class="hljs-type">int</span>, portsCount <span class="hljs-type">int</span>, maxBoxes <span class="hljs-type">int</span>, maxWeight <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">int</span> &#123;<br>	n := <span class="hljs-built_in">len</span>(boxes)<br>	w := <span class="hljs-built_in">make</span>([]<span class="hljs-type">int</span>, n+<span class="hljs-number">1</span>)<br>	neg := <span class="hljs-built_in">make</span>([]<span class="hljs-type">int</span>, n)<br>	<span class="hljs-keyword">for</span> i, v := <span class="hljs-keyword">range</span> boxes &#123;<br>		w[i+<span class="hljs-number">1</span>] = w[i] + v[<span class="hljs-number">1</span>]<br>		<span class="hljs-keyword">if</span> i &gt; <span class="hljs-number">0</span> &#123;<br>			neg[i] = neg[i<span class="hljs-number">-1</span>]<br>			<span class="hljs-keyword">if</span> v[<span class="hljs-number">0</span>] != boxes[i<span class="hljs-number">-1</span>][<span class="hljs-number">0</span>] &#123;<br>				neg[i]++<br>			&#125;<br>		&#125;<br>	&#125;<br><br>	<span class="hljs-keyword">type</span> pair <span class="hljs-keyword">struct</span>&#123; j, cost <span class="hljs-type">int</span> &#125;<br>	f := <span class="hljs-built_in">make</span>([]<span class="hljs-type">int</span>, n+<span class="hljs-number">1</span>)<br>	g := <span class="hljs-built_in">make</span>([]pair, <span class="hljs-number">1</span>, n) <span class="hljs-comment">// &#123;0, 0&#125; is inqueued</span><br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">1</span>; i &lt;= n; i++ &#123;<br>		<span class="hljs-keyword">for</span> <span class="hljs-built_in">len</span>(g) &gt; <span class="hljs-number">0</span> &amp;&amp; (i-g[<span class="hljs-number">0</span>].j &gt; maxBoxes || w[i]-w[g[<span class="hljs-number">0</span>].j] &gt; maxWeight) &#123;<br>			g = g[<span class="hljs-number">1</span>:]<br>		&#125;<br>		p := g[<span class="hljs-number">0</span>]<br>		f[i] = f[p.j] - neg[p.j] + neg[i<span class="hljs-number">-1</span>] + <span class="hljs-number">2</span><br>		<span class="hljs-keyword">for</span> i &lt; n &amp;&amp; <span class="hljs-built_in">len</span>(g) &gt; <span class="hljs-number">0</span> &amp;&amp; g[<span class="hljs-built_in">len</span>(g)<span class="hljs-number">-1</span>].cost &gt;= f[i]-neg[i] &#123;<br>			g = g[:<span class="hljs-built_in">len</span>(g)<span class="hljs-number">-1</span>]<br>		&#125;<br>		<span class="hljs-keyword">if</span> i &lt; n &#123;<br>			g = <span class="hljs-built_in">append</span>(g, pair&#123;i, f[i] - neg[i]&#125;)<br>		&#125;<br>	&#125;<br>	<span class="hljs-keyword">return</span> f[n]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p class="note note-info">堆优化可能比较无脑, 在比赛时, 可以优先考虑</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Leetcode/" class="category-chain-item">Leetcode</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" class="print-no-link">#动态规划</a>
+      
+        <a href="/tags/%E5%8D%95%E8%B0%83%E9%98%9F%E5%88%97/" class="print-no-link">#单调队列</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>LC.1687从仓库到码头运输箱子</div>
+      <div>https://oliverchao.github.io/2022/12/06/LC-1687从仓库到码头运输箱子/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Oliver</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/12/06/%E6%AF%8F%E6%97%A5%E4%B8%80%E8%8C%B6-C-Sequence/" title="每日一茶:C-Sequence">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">每日一茶:C-Sequence</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/05/Github%E5%A6%82%E4%BD%95%E6%8F%90%E4%BA%A4PR/" title="Github如何提交PR">
+                        <span class="hidden-mobile">Github如何提交PR</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

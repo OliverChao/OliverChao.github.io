@@ -1,0 +1,757 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fav.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Oliver">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Alacritty GitHub地址             为什么需要一款足够Modern的终端模拟器呢? 因为Alacritty足够快(GPU 加速), 足够小(Rust 编写), 足够好看(主题丰富). 当然也有一些使用的功能.  终端模拟器(Terminal)并不是对标的 Bash, Zsh, Fish 等终端(Shell), Terminal 是 Shell 的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="你值得拥有更好的终端模拟器: Alacritty配置">
+<meta property="og:url" content="https://oliverchao.github.io/2022/12/06/%E4%BD%A0%E5%80%BC%E5%BE%97%E6%8B%A5%E6%9C%89%E6%9B%B4%E5%A5%BD%E7%9A%84%E7%BB%88%E7%AB%AF-Alacritty%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="Oliver">
+<meta property="og:description" content="Alacritty GitHub地址             为什么需要一款足够Modern的终端模拟器呢? 因为Alacritty足够快(GPU 加速), 足够小(Rust 编写), 足够好看(主题丰富). 当然也有一些使用的功能.  终端模拟器(Terminal)并不是对标的 Bash, Zsh, Fish 等终端(Shell), Terminal 是 Shell 的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/OliverChao/blog-pic/master/20221206231704.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/OliverChao/blog-pic/master/20221206235115.png">
+<meta property="article:published_time" content="2022-12-06T15:02:03.000Z">
+<meta property="article:modified_time" content="2024-02-10T12:37:17.493Z">
+<meta property="article:author" content="Oliver">
+<meta property="article:tag" content="善其事,利其器">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/OliverChao/blog-pic/master/20221206231704.png">
+  
+  
+  
+  <title>你值得拥有更好的终端模拟器: Alacritty配置 - Oliver</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"oliverchao.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Oliver&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="你值得拥有更好的终端模拟器: Alacritty配置"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        Oliver
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-06 23:02" pubdate>
+          2022年12月6日
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">你值得拥有更好的终端模拟器: Alacritty配置</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年2月10日
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <div class="note note-primary">
+            <p>Alacritty <a target="_blank" rel="noopener" href="https://github.com/alacritty/alacritty">GitHub地址</a></p>
+          </div>
+
+<h2 id="为什么需要一款足够Modern的终端模拟器呢"><a href="#为什么需要一款足够Modern的终端模拟器呢" class="headerlink" title="为什么需要一款足够Modern的终端模拟器呢?"></a>为什么需要一款足够Modern的终端模拟器呢?</h2><blockquote>
+<p>因为Alacritty足够快(GPU 加速), 足够小(Rust 编写), 足够好看(主题丰富). 当然也有一些使用的功能.</p>
+</blockquote>
+<p>终端模拟器(Terminal)并不是对标的 Bash, Zsh, Fish 等终端(Shell), Terminal 是 Shell 的一个容器, 供用户在这个容器下可以使用 Bash&#x2F;Zsh&#x2F;Fish, 这个容器在图形界面的操作系统下尤其重要, 因为这意味着用户不必要切换到 TTY 模式才可以敲击命令行. <br>Alacritty 和 Gnome-terminal, iTerm2, Kitty 等等同属于终端模拟器.</p>
+<p>对于普通的用户, 尤其是 Windows 用户, 对终端的需求可能并不是很高, 大部分开发工作都是集成的. 一款 IDE 解决所有问题. 但是对于 Unix 用户来说, 终端是计算机的灵魂, 尤其是使用 Vim 作为开发工具的程序员, 终端更是不可或缺的. 以 Ubuntu 来说, 内置的 Gnome-terminal 基本可以满足所有的需求, 但是, 在大量使用情况下, 谁又拒绝一款更好的工具呢, 并且还是用 <strong>Rust</strong> 编写的, 主观来讲, 对 <strong>Go</strong> 和 <strong>Rust</strong> 写的程序总有一种天然的好感.</p>
+<p class="note note-success">工欲善其事，必先利其器</p>
+
+<p><img src="https://raw.githubusercontent.com/OliverChao/blog-pic/master/20221206231704.png" srcset="/img/loading.gif" lazyload alt="目前配置"></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><div class="note note-primary">
+            <p><a target="_blank" rel="noopener" href="https://github.com/alacritty/alacritty/blob/master/INSTALL.md">官方安装文档</a></p>
+          </div>
+
+<p>如果是 Windows 和 MacOS, 那么可以直接通过安装包安装部署. 如果是 Linux 用户, 也可以在上述官方文档中找到对应的 Linux 发行版进行安装.</p>
+<blockquote>
+<p>建议通过 Rust 手动安装, 以后也方便更新.</p>
+</blockquote>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>Alacritty 通过一个<code>alacritty.yml</code>配置文件进行配置. 该文件默认是没有的, 需要自己生成.<br>文件目录位置:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">// Linux: 以下4个任意一个<br><span class="hljs-variable">$XDG_CONFIG_HOME</span>/alacritty/alacritty.yml<br><span class="hljs-variable">$XDG_CONFIG_HOME</span>/alacritty.yml<br><span class="hljs-variable">$HOME</span>/.config/alacritty/alacritty.yml<br><span class="hljs-variable">$HOME</span>/.alacritty.yml<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">// Windows: windows用户可能比较了解 APPDATA 的位置<br>%APPDATA%\alacritty\alacritty.yml<br></code></pre></td></tr></table></figure>
+<p>官方项目下有个文件<a target="_blank" rel="noopener" href="https://github.com/alacritty/alacritty/blob/master/alacritty.yml">alacritty.yml</a>, 里面有对每个配置详细的说明, 可以很大程度自定义.</p>
+<h3 id="融合-Zsh-Bash-Fish-终端"><a href="#融合-Zsh-Bash-Fish-终端" class="headerlink" title="融合 Zsh&#x2F;Bash&#x2F;Fish 终端"></a>融合 Zsh&#x2F;Bash&#x2F;Fish 终端</h3><p>只需要让使用的终端找到alacritty的配置就好了, 配置文件在<a target="_blank" rel="noopener" href="https://github.com/alacritty/alacritty/tree/master/extra/completions">官方文档</a>中找到, </p>
+<p>以Bash为例, 其中 <code>pwd</code> 是<code>alacritty.bash</code>所在目录, 建议存在一个固定的配置目录下.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;source <span class="hljs-subst">$(pwd)</span>/alacritty.bash&quot;</span> &gt;&gt; ~/.bashrc<br></code></pre></td></tr></table></figure>
+
+<h3 id="颜色主题"><a href="#颜色主题" class="headerlink" title="颜色主题"></a>颜色主题</h3><p>通过该配置文件是很难测试出一个喜欢的主题颜色的, 可以使用别人写好的一款工具, 但是需要 Node.js 环境</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install -g alacritty-themes<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>执行完后可以直接运行该程序, 就可以直接选择了, 该程序的作用就是在 <code>alacritty.yml</code> 文件里写一些颜色方案. 所以, 如果不想安装该环境, 可以在网上找一找自己喜欢的配色.</p>
+</blockquote>
+<details>
+  <summary>我的颜色方案</summary>
+
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">colors:</span><br>  <span class="hljs-attr">name:</span> <span class="hljs-string">Lumifoo</span><br>  <span class="hljs-attr">author:</span> <span class="hljs-string">Gutterslob</span><br>  <span class="hljs-attr">primary:</span><br>    <span class="hljs-attr">background:</span> <span class="hljs-string">&quot;#1e2021&quot;</span><br>    <span class="hljs-attr">foreground:</span> <span class="hljs-string">&quot;#888a8c&quot;</span><br>  <span class="hljs-attr">cursor:</span><br>    <span class="hljs-attr">text:</span> <span class="hljs-string">&quot;#1e2021&quot;</span><br>    <span class="hljs-attr">cursor:</span> <span class="hljs-string">&quot;#888a8c&quot;</span><br>  <span class="hljs-attr">normal:</span><br>    <span class="hljs-attr">black:</span> <span class="hljs-string">&quot;#515151&quot;</span><br>    <span class="hljs-attr">red:</span> <span class="hljs-string">&quot;#bf6382&quot;</span><br>    <span class="hljs-attr">green:</span> <span class="hljs-string">&quot;#65a446&quot;</span><br>    <span class="hljs-attr">yellow:</span> <span class="hljs-string">&quot;#ad8a43&quot;</span><br>    <span class="hljs-attr">blue:</span> <span class="hljs-string">&quot;#6b85c2&quot;</span><br>    <span class="hljs-attr">magenta:</span> <span class="hljs-string">&quot;#9e6bb8&quot;</span><br>    <span class="hljs-attr">cyan:</span> <span class="hljs-string">&quot;#5c9d88&quot;</span><br>    <span class="hljs-attr">white:</span> <span class="hljs-string">&quot;#919191&quot;</span><br>  <span class="hljs-attr">bright:</span><br>    <span class="hljs-attr">black:</span> <span class="hljs-string">&quot;#707172&quot;</span><br>    <span class="hljs-attr">red:</span> <span class="hljs-string">&quot;#eaaec2&quot;</span><br>    <span class="hljs-attr">green:</span> <span class="hljs-string">&quot;#aed49b&quot;</span><br>    <span class="hljs-attr">yellow:</span> <span class="hljs-string">&quot;#d4c3a0&quot;</span><br>    <span class="hljs-attr">blue:</span> <span class="hljs-string">&quot;#afc4e9&quot;</span><br>    <span class="hljs-attr">magenta:</span> <span class="hljs-string">&quot;#d2b1e2&quot;</span><br>    <span class="hljs-attr">cyan:</span> <span class="hljs-string">&quot;#a4d0c1&quot;</span><br>    <span class="hljs-attr">white:</span> <span class="hljs-string">&quot;#d0d0d0&quot;</span><br><span class="hljs-attr">theme:</span> <span class="hljs-string">Gutterslob</span> <span class="hljs-bullet">-</span> <span class="hljs-string">lumifoo</span><br></code></pre></td></tr></table></figure>
+</details>
+
+<h2 id="设置Alacritty为首选终端"><a href="#设置Alacritty为首选终端" class="headerlink" title="设置Alacritty为首选终端"></a>设置Alacritty为首选终端</h2><h3 id="配置Ctrl-Alt-t"><a href="#配置Ctrl-Alt-t" class="headerlink" title="配置Ctrl-Alt-t"></a>配置<code>Ctrl-Alt-t</code></h3><p>如果你对Ubuntu比较熟悉, 应该是到<code>Ctrl-Alt-t</code>是可以打开自带终端的, 那么如何设置当我们执行<code>Ctrl-Alt-t</code>时打开的是Alacritty.<br>需要执行以下命令: <code>/usr/bin/alacritty</code> 根据自己的alacritty位置做修改.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/alacritty 50<br></code></pre></td></tr></table></figure>
+<p>查看当前的终端选项的优先级:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo update-alternatives --config x-terminal-emulator<br></code></pre></td></tr></table></figure>
+<p>如果想要删除 alacritty 终端选项, 可以执行:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo update-alternatives --remove <span class="hljs-string">&quot;x-terminal-emulator&quot;</span> <span class="hljs-string">&quot;/usr/bin/alacritty&quot;</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="配置Open-in-Terminal菜单"><a href="#配置Open-in-Terminal菜单" class="headerlink" title="配置Open in Terminal菜单"></a>配置<code>Open in Terminal</code>菜单</h3><div class="note note-danger">
+            <p>这个需要修改 Ubuntu Gnome-shell 内部配置, 如果真的有需要, 可以参考这个项目<a target="_blank" rel="noopener" href="https://github.com/Stunkymonkey/nautilus-open-any-terminal">nautilus-open-any-terminal | 点击跳转</a></p>
+          </div>
+<blockquote>
+<p>其实, <code>Ctrl-Alt-t</code> 也可以通过上述项目进行修改, 因为是通过<span class="label label-danger">dconf-editor</span> 进行修改的.</p>
+</blockquote>
+<p>最终效果:<br><img src="https://raw.githubusercontent.com/OliverChao/blog-pic/master/20221206235115.png" srcset="/img/loading.gif" lazyload></p>
+<div class="note note-success">
+            <p>这样就可以通过 <code>Ctrl-Alt-t</code> 和 <code>Open in Terminal</code> 启动Alacritty了.</p>
+          </div>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Linux/" class="category-chain-item">Linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%96%84%E5%85%B6%E4%BA%8B-%E5%88%A9%E5%85%B6%E5%99%A8/" class="print-no-link">#善其事,利其器</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>你值得拥有更好的终端模拟器: Alacritty配置</div>
+      <div>https://oliverchao.github.io/2022/12/06/你值得拥有更好的终端-Alacritty配置/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Oliver</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/12/07/%E6%AF%8F%E6%97%A5%E4%B8%80%E8%8C%B6-C-ABS-Permutation/" title="每日一茶:C-ABS Permutation">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">每日一茶:C-ABS Permutation</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/06/%E6%AF%8F%E6%97%A5%E4%B8%80%E8%8C%B6-C-Sequence/" title="每日一茶:C-Sequence">
+                        <span class="hidden-mobile">每日一茶:C-Sequence</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

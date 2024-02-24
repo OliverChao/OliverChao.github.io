@@ -1,0 +1,765 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fav.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Oliver">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="nvim api 是写插件必须要准备，这里总结一些经常遇到的一些 api，因为自己也是遇到了先去查文档。 这里会记录一些觉得使用频率较多的，记录一下。 Buffer给 win &#x2F; buf 设置 optionnvim_set_option_value({name}, {value}, {*opts})Sets the value of an option. The behavior of">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nvim 一些重要 API">
+<meta property="og:url" content="https://oliverchao.github.io/2024/02/24/nvim-%E4%B8%80%E4%BA%9B%E9%87%8D%E8%A6%81-API/index.html">
+<meta property="og:site_name" content="Oliver">
+<meta property="og:description" content="nvim api 是写插件必须要准备，这里总结一些经常遇到的一些 api，因为自己也是遇到了先去查文档。 这里会记录一些觉得使用频率较多的，记录一下。 Buffer给 win &#x2F; buf 设置 optionnvim_set_option_value({name}, {value}, {*opts})Sets the value of an option. The behavior of">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-02-24T06:08:14.000Z">
+<meta property="article:modified_time" content="2024-02-24T07:15:00.472Z">
+<meta property="article:author" content="Oliver">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>nvim 一些重要 API - Oliver</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"oliverchao.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Oliver&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="nvim 一些重要 API"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        Oliver
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-02-24 14:08" pubdate>
+          2024年2月24日
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">nvim 一些重要 API</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年2月24日
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p><a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html">nvim api</a> 是写插件必须要准备，这里总结一些经常遇到的一些 api，因为自己也是遇到了先去查文档。</p>
+<p>这里会记录一些觉得使用频率较多的，记录一下。</p>
+<h1 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a>Buffer</h1><h2 id="给-win-buf-设置-option"><a href="#给-win-buf-设置-option" class="headerlink" title="给 win &#x2F; buf 设置 option"></a>给 win &#x2F; buf 设置 option</h2><p>nvim_set_option_value({name}, {value}, {*opts})<br>Sets the value of an option. The behavior of this function matches that of :set: for global-local options, both the global and local value are set unless otherwise specified with {scope}.</p>
+<p>Note the options {win} and {buf} cannot be used together.<br>Parameters:</p>
+<ul>
+<li>{name} Option name</li>
+<li>{value} New option value</li>
+<li>{opts} Optional parameters<ol>
+<li>scope: One of “global” or “local”. Analogous to :setglobal and :setlocal, respectively.</li>
+<li>win: window-ID. Used for setting window local option.</li>
+<li>buf: Buffer number. Used for setting buffer local option.</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>这个 api 是 nvim-10 新增的，用来代替 nvim_buf_set_option 和 nvim_win_set_option</p>
+</blockquote>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs lua">vim.api.nvim_set_option_value(<span class="hljs-string">&quot;bufhidden&quot;</span>, <span class="hljs-string">&quot;delete&quot;</span>, &#123; buf = <span class="hljs-built_in">self</span>.bufnr &#125;)<br>vim.api.nvim_set_option_value(<span class="hljs-string">&quot;winfixwidth&quot;</span>, <span class="hljs-literal">true</span>, &#123; win = <span class="hljs-built_in">self</span>.winnr &#125;)<br>vim.api.nvim_set_option_value(<span class="hljs-string">&quot;modifiable&quot;</span>, <span class="hljs-literal">false</span>, &#123; buf = <span class="hljs-built_in">self</span>.bufnr &#125;)<br>vim.api.nvim_set_option_value(<span class="hljs-string">&quot;ft&quot;</span>, <span class="hljs-string">&quot;BufmsgHelp&quot;</span>, &#123; buf = <span class="hljs-built_in">self</span>.bufnr &#125;)<br></code></pre></td></tr></table></figure>
+
+<h2 id="删除-buffer"><a href="#删除-buffer" class="headerlink" title="删除 buffer"></a>删除 buffer</h2><p>nvim_buf_delete(<code>&#123;buffer&#125;</code>, <code>&#123;*opts&#125;</code>) <code>nvim_buf_delete()</code>Deletes the buffer. See <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/windows.html#%3Abwipeout">:bwipeout</a></p>
+<p>Attributes:<br>not allowed when <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/eval.html#textlock">textlock</a> is active or in the <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/cmdline.html#cmdwin">cmdwin</a></p>
+<p>Parameters:<br><code>&#123;buffer&#125;</code> Buffer handle, or 0 for current buffer<br><code>&#123;opts&#125;</code> Optional parameters. Keys:<br>force: Force deletion and ignore unsaved changes.<br>unload: Unloaded only, do not delete. See <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/windows.html#%3Abunload">:bunload</a></p>
+<h2 id="创建-buffer"><a href="#创建-buffer" class="headerlink" title="创建 buffer"></a>创建 buffer</h2><p>nvim_create_buf(<code>&#123;listed&#125;</code>, <code>&#123;scratch&#125;</code>) <code>nvim_create_buf()</code>Creates a new, empty, unnamed buffer.<br>Parameters: (布尔值)<br><code>&#123;listed&#125;</code> Sets <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/options.html#'buflisted'">‘buflisted’</a><br><code>&#123;scratch&#125;</code> Creates a “throwaway” <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/windows.html#scratch-buffer">scratch-buffer</a> for temporary work (always <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/options.html#'nomodified'">‘nomodified’</a>). Also sets <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/options.html#'nomodeline'">‘nomodeline’</a> on the buffer.</p>
+<p>Return:<br>Buffer handle, or 0 on error<br>See also:<br>buf_open_scratch</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs lua"><span class="hljs-built_in">self</span>.bufnr = vim.api.nvim_create_buf(<span class="hljs-literal">false</span>, <span class="hljs-literal">true</span>)<br>vim.api.nvim_set_option_value(<span class="hljs-string">&quot;bufhidden&quot;</span>, <span class="hljs-string">&quot;delete&quot;</span>, &#123; buf = <span class="hljs-built_in">self</span>.bufnr &#125;)<br></code></pre></td></tr></table></figure>
+
+<p>‘buflisted’ ‘bl’	boolean	(default on)<br>            local to buffer<br>    When this option is set, the buffer shows up in the buffer list.  If<br>    it is reset it is not used for “:bnext”, “ls”, the Buffers menu, etc.<br>    This option is reset by Vim for buffers that are only used to remember<br>    a file name or marks.  Vim sets it when starting to edit a buffer.<br>    But not when moving to a buffer with “:buffer”.</p>
+<h2 id="buffer-mapping"><a href="#buffer-mapping" class="headerlink" title="buffer mapping"></a>buffer mapping</h2><p>nvim_buf_set_keymap(<code>&#123;buffer&#125;</code>, <code>&#123;mode&#125;</code>, <code>&#123;lhs&#125;</code>, <code>&#123;rhs&#125;</code>, <code>&#123;*opts&#125;</code>) Sets a buffer-local <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/map.html#mapping">mapping</a> for the given mode.</p>
+<p>Parameters:</p>
+<p><code>&#123;buffer&#125;</code> Buffer handle, or 0 for current buffer</p>
+<p>See also:</p>
+<p><a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#nvim_set_keymap()">nvim_set_keymap()</a></p>
+<h2 id="buffer-插入-更新-文字"><a href="#buffer-插入-更新-文字" class="headerlink" title="buffer 插入&#x2F;更新 文字"></a>buffer 插入&#x2F;更新 文字</h2><h3 id="1-nvim-buf-set-lines-设置文字，行文本，index-从0开始"><a href="#1-nvim-buf-set-lines-设置文字，行文本，index-从0开始" class="headerlink" title="1. nvim_buf_set_lines 设置文字，行文本，index 从0开始"></a>1. nvim_buf_set_lines 设置文字，行文本，index 从0开始</h3><blockquote>
+<p>如果 <code>start == end</code>，在该行开始 insert 文本<br>如果 <code>start == end+1</code>，在该行开始 insert 文本<br>如果 <code>start &gt;= end+2</code>，替换文本</p>
+</blockquote>
+<p>nvim_buf_set_lines({buffer}, {start}, {end}, {strict_indexing}, {replacement}) Sets (replaces) a line-range in the buffer.</p>
+<p>Indexing is zero-based, end-exclusive. Negative indices are interpreted as length+1+index: -1 refers to the index past the end. So to change or delete the last element use start&#x3D;-2 and end&#x3D;-1.<br>To insert lines at a given index, set start and end to the same index. To delete a range of lines, set replacement to an empty array.<br>Out-of-bounds indices are clamped to the nearest valid value, unless strict_indexing is set.</p>
+<h3 id="2-nvim-put-put"><a href="#2-nvim-put-put" class="headerlink" title="2. nvim_put (:put)"></a>2. nvim_put (:put)</h3><p>nvim_put(<code>&#123;lines&#125;</code>, <code>&#123;type&#125;</code>, <code>&#123;after&#125;</code>, <code>&#123;follow&#125;</code>) <code>nvim_put()</code>Puts text at cursor, in any mode.</p>
+<p>Compare <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/change.html#%3Aput">:put</a> and <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/change.html#p">p</a> which are always linewise.</p>
+<p>Attributes:<br>not allowed when <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/eval.html#textlock">textlock</a> is active</p>
+<p>Parameters:<br><code>&#123;lines&#125;</code> <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/builtin.html#readfile()">readfile()</a>-style list of lines. <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/channel.html#channel-lines">channel-lines</a><br><code>&#123;type&#125;</code> Edit behavior: any <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/builtin.html#getregtype()">getregtype()</a> result, or:<br>“b” <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/visual.html#blockwise-visual">blockwise-visual</a> mode (may include width, e.g. “b3”)<br>“c” <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/motion.html#charwise">charwise</a> mode<br>“l” <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/motion.html#linewise">linewise</a> mode<br>“” guess by contents, see <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/builtin.html#setreg()">setreg()</a><br><code>&#123;after&#125;</code> If true insert after cursor (like <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/change.html#p">p</a>), or before (like <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/change.html#P">P</a>).<br><code>&#123;follow&#125;</code> If true place cursor at end of inserted text.</p>
+<h3 id="3-nvim-buf-set-text-可以设置列"><a href="#3-nvim-buf-set-text-可以设置列" class="headerlink" title="3. nvim_buf_set_text 可以设置列"></a>3. nvim_buf_set_text 可以设置列</h3><p>nvim_buf_set_text(<code>&#123;buffer&#125;</code>, <code>&#123;start_row&#125;</code>, <code>&#123;start_col&#125;</code>, <code>&#123;end_row&#125;</code>, <code>&#123;end_col&#125;</code>, <code>&#123;replacement&#125;</code>) Sets (replaces) a range in the buffer<br>This is recommended over <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#nvim_buf_set_lines()">nvim_buf_set_lines()</a> when only modifying parts of a line, as extmarks will be preserved on non-modified parts of the touched lines.<br>Indexing is zero-based. Row indices are end-inclusive, and column indices are end-exclusive.<br>To insert text at a given <code>(row, column)</code> location, usestart_row &#x3D; end_row &#x3D; row<code>and</code>start_col &#x3D; end_col &#x3D; col<code>. To delete the text in a range, use </code>replacement &#x3D; {}&#96;.<br>Prefer <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#nvim_buf_set_lines()">nvim_buf_set_lines()</a> if you are only adding or deleting entire lines.<br>Prefer <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#nvim_put()">nvim_put()</a> if you want to insert text at the cursor position.</p>
+<p>Attributes:</p>
+<p>not allowed when <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/eval.html#textlock">textlock</a> is active</p>
+<p>Parameters:<br><code>&#123;buffer&#125;</code> Buffer handle, or 0 for current buffer<br><code>&#123;start_row&#125;</code> First line index<br><code>&#123;start_col&#125;</code> Starting column (byte offset) on first line<br><code>&#123;end_row&#125;</code> Last line index, inclusive<br><code>&#123;end_col&#125;</code> Ending column (byte offset) on last line, exclusive<br><code>&#123;replacement&#125;</code> Array of lines to use as replacement</p>
+<p>See also:<br><a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#nvim_buf_set_lines()">nvim_buf_set_lines()</a><br><a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#nvim_put()">nvim_put()</a></p>
+<h1 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h1><h2 id="创建一个window-可以是-split-或者是-float-windows"><a href="#创建一个window-可以是-split-或者是-float-windows" class="headerlink" title="创建一个window 可以是 split 或者是 float windows"></a>创建一个window 可以是 split 或者是 float windows</h2><p>此api可以创建一个新的window，这个文档太多了，具体参数还是看网页链接<br><a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#nvim_open_win()">nvim_open_win</a></p>
+<p>nvim_open_win(<code>&#123;buffer&#125;</code>, <code>&#123;enter&#125;</code>, <code>&#123;*config&#125;</code>) <code>nvim_open_win()</code>Opens a new split window, or a floating window if <code>relative</code> is specified, or an external window (managed by the UI) if <code>external</code> is specified.<br>Floats are windows that are drawn above the split layout, at some anchor position in some other window. Floats can be drawn internally or by external GUI with the <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/ui.html#ui-multigrid">ui-multigrid</a> extension. External windows are only supported with multigrid GUIs, and are displayed as separate top-level windows.<br>For a general overview of floats, see <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#api-floatwin">api-floatwin</a>.<br>The <code>width</code> and <code>height</code> of the new window must be specified when opening a floating window, but are optional for normal windows.</p>
+<p>Example (Lua): window-relative float</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs lua">vim.api.nvim_open_win(<span class="hljs-number">0</span>, <span class="hljs-literal">false</span>,<br>  &#123;relative=<span class="hljs-string">&#x27;win&#x27;</span>, row=<span class="hljs-number">3</span>, col=<span class="hljs-number">3</span>, width=<span class="hljs-number">12</span>, height=<span class="hljs-number">3</span>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>Example (Lua): buffer-relative float (travels as buffer is scrolled)</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs lua">vim.api.nvim_open_win(<span class="hljs-number">0</span>, <span class="hljs-literal">false</span>,<br>  &#123;relative=<span class="hljs-string">&#x27;win&#x27;</span>, width=<span class="hljs-number">12</span>, height=<span class="hljs-number">3</span>, bufpos=&#123;<span class="hljs-number">100</span>,<span class="hljs-number">10</span>&#125;&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>Example (Lua): vertical split left of the current window</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs lua">vim.api.nvim_open_win(<span class="hljs-number">0</span>, <span class="hljs-literal">false</span>, &#123;<br>  split = <span class="hljs-string">&#x27;left&#x27;</span>,<br>  win = <span class="hljs-number">0</span><br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<h1 id="Autocmd"><a href="#Autocmd" class="headerlink" title="Autocmd"></a>Autocmd</h1><h1 id="创建-autocmd"><a href="#创建-autocmd" class="headerlink" title="创建 autocmd"></a>创建 autocmd</h1><p>nvim_create_autocmd(<code>&#123;event&#125;</code>, <code>&#123;*opts&#125;</code>) <code>nvim_create_autocmd()</code>Creates an <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/autocmd.html#autocommand">autocommand</a> event handler, defined by <code>callback</code> (Lua function or Vimscript function name string) or <code>command</code> (Ex command string).</p>
+<p>Example using Lua callback:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs lua">vim.api.nvim_create_autocmd(&#123;<span class="hljs-string">&quot;BufEnter&quot;</span>, <span class="hljs-string">&quot;BufWinEnter&quot;</span>&#125;, &#123;<br>  pattern = &#123;<span class="hljs-string">&quot;*.c&quot;</span>, <span class="hljs-string">&quot;*.h&quot;</span>&#125;,<br>  callback = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(ev)</span></span><br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">&#x27;event fired: %s&#x27;</span>, vim.inspect(ev)))<br>  <span class="hljs-keyword">end</span><br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>Example using an Ex command as the handler:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs lua">vim.api.nvim_create_autocmd(&#123;<span class="hljs-string">&quot;BufEnter&quot;</span>, <span class="hljs-string">&quot;BufWinEnter&quot;</span>&#125;, &#123;<br>  pattern = &#123;<span class="hljs-string">&quot;*.c&quot;</span>, <span class="hljs-string">&quot;*.h&quot;</span>&#125;,<br>  command = <span class="hljs-string">&quot;echo &#x27;Entering a C or C++ file&#x27;&quot;</span>,<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>[Note:](<a target="_blank" rel="noopener" href="https://github.com/neovim/neovim/issues/new?labels=bug&title=user+docs+HTML:+api.txt+&body=%60gen_help_html.lua%60+problem+at:+https://neovim.io/doc/user/api.html">https://github.com/neovim/neovim/issues/new?labels=bug&amp;title=user+docs+HTML%3A+api.txt+&amp;body=`gen_help_html.lua`+problem+at%3A+https://neovim.io/doc/user/api.html</a> +unhandled+token%3A+<code>note</code> Context%3A <code>       &#125;) &lt;     Note%3A `pattern` is NOT automatically expanded (unlike with |%3Aautocmd|)%2C    thus names like &quot;%24HOME&quot; and &quot;~&quot; must be expanded explicitly%3A &gt;lua        pattern %3D vim.fn.expand(&quot;~&quot;) .. &quot;%2Fsome%2Fpath%2F*.py&quot; &lt;</code>) <code>pattern</code> is NOT automatically expanded (unlike with <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/autocmd.html#%3Aautocmd">:autocmd</a>), thus names like “$HOME” and “~” must be expanded explicitly:</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs lua">pattern = vim.fn.expand(<span class="hljs-string">&quot;~&quot;</span>) .. <span class="hljs-string">&quot;/some/path/*.py&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>Parameters:</p>
+<p><code>&#123;event&#125;</code> (string|array) Event(s) that will trigger the handler (<code>callback</code> or <code>command</code>).</p>
+<p><code>&#123;opts&#125;</code> Options dict:</p>
+<p>group (string|integer) optional: autocommand group name or id to match against.</p>
+<p>pattern (string|array) optional: pattern(s) to match literally <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/autocmd.html#autocmd-pattern">autocmd-pattern</a>.</p>
+<p>buffer (integer) optional: buffer number for buffer-local autocommands <a target="_blank" rel="noopener" href="https://neovim.io/doc/user/autocmd.html#autocmd-buflocal">autocmd-buflocal</a>. Cannot be used with <code>&#123;pattern&#125;</code>.</p>
+<p>desc (string) optional: description (for documentation and troubleshooting).</p>
+<p>callback (function|string) optional: Lua function (or Vimscript function name, if string) called when the event(s) is triggered. Lua callback can return a truthy value (not <code>false</code> or <code>nil</code>) to delete the autocommand. Receives a table argument with these keys:</p>
+<blockquote>
+<p>还有一些不常用到的，可以看一下<a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#nvim_create_autocmd()">链接</a></p>
+</blockquote>
+<p>Autocommand id (number)</p>
+<p>See also:</p>
+<p><a target="_blank" rel="noopener" href="https://neovim.io/doc/user/autocmd.html#autocommand">autocommand</a></p>
+<p><a target="_blank" rel="noopener" href="https://neovim.io/doc/user/api.html#nvim_del_autocmd()">nvim_del_autocmd()</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Nvim/" class="category-chain-item">Nvim</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>nvim 一些重要 API</div>
+      <div>https://oliverchao.github.io/2024/02/24/nvim-一些重要-API/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Oliver</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年2月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/02/10/Rust%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D%E4%B8%AD%E6%89%80%E6%9C%89%E6%9D%83%E9%97%AE%E9%A2%98/" title="Rust模式匹配中的所有权问题">
+                        <span class="hidden-mobile">Rust模式匹配中的所有权问题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

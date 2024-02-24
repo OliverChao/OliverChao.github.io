@@ -1,0 +1,832 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fav.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Oliver">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在刷算法题的时候, 经常会遇到复合数据结构, 有时候又要求这些数据结构可以根据某种规则排序和比较. 需要快速按照正确的思路进行编码, 这就需要熟练掌握 Rust 中的数据结构比较和排序规则.               这篇文章会尝试探讨 Rust 中的排序和比较规则. 因为排序需要用到比较, 因此下文单指 排序 时, 也默认包含 比较 规则.              元组的排序规则是什么.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust-数据比较和排序">
+<meta property="og:url" content="https://oliverchao.github.io/2022/12/31/Rust-%E6%95%B0%E6%8D%AE%E6%AF%94%E8%BE%83%E5%92%8C%E6%8E%92%E5%BA%8F/index.html">
+<meta property="og:site_name" content="Oliver">
+<meta property="og:description" content="在刷算法题的时候, 经常会遇到复合数据结构, 有时候又要求这些数据结构可以根据某种规则排序和比较. 需要快速按照正确的思路进行编码, 这就需要熟练掌握 Rust 中的数据结构比较和排序规则.               这篇文章会尝试探讨 Rust 中的排序和比较规则. 因为排序需要用到比较, 因此下文单指 排序 时, 也默认包含 比较 规则.              元组的排序规则是什么.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-31T02:18:29.000Z">
+<meta property="article:modified_time" content="2024-02-10T12:37:17.491Z">
+<meta property="article:author" content="Oliver">
+<meta property="article:tag" content="Rust基础">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Rust-数据比较和排序 - Oliver</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"oliverchao.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"gtag":null},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Oliver&#39;s Blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Rust-数据比较和排序"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        Oliver
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-31 10:18" pubdate>
+          2022年12月31日
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Rust-数据比较和排序</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年2月10日
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>在刷算法题的时候, 经常会遇到<strong>复合数据结构</strong>, 有时候又要求这些数据结构可以根据某种规则排序和比较. 需要快速按照正确的思路进行编码, 这就需要熟练掌握 Rust 中的数据结构比较和排序规则.</p>
+</blockquote>
+<div class="note note-primary">
+            <p>这篇文章会尝试探讨 Rust 中的排序和比较规则. 因为排序需要用到比较, 因此下文单指 排序 时, 也默认包含 比较 规则.</p>
+          </div>
+
+<ol>
+<li>元组的排序规则是什么. 因为 Rust 中的 孤儿原则, 不能给元组实现标准库的 Trait, 只能按照 Rust 中对元组的规则进行.</li>
+<li>自己定义的 复合数据结构, 要想实现排序规则, 需要实现哪些 Trait, 又各自有哪些作用.</li>
+<li><code>sort_by</code>, <code>sort_by_key</code> 如何定义闭包函数.</li>
+<li><code>BTreeSet</code>, <code>BTreeMap</code> 如何使用并提供自己定义的数据结构支持.</li>
+<li><code>BinaryHeap</code> 默认是 大顶堆 , 那如何实现 小顶堆, 如何提供自己定义的数据结构支持.</li>
+</ol>
+<p>带着这些问题, 让我们深入 Rust 的比较和排序规则吧.</p>
+<h1 id="Rust-比较"><a href="#Rust-比较" class="headerlink" title="Rust 比较"></a>Rust 比较</h1><h2 id="std-cmp-模块"><a href="#std-cmp-模块" class="headerlink" title="std::cmp 模块"></a>std::cmp 模块</h2><p><a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/cmp/index.html"><code>std::cmp</code></a> 是 Rust 提供比较的模块. 如果你熟悉其他编程语言, 像 c&#x2F;cpp, golang, python等等, 可能会怀疑为什么要为比较单独写一个库, 而不是像 cpp 那样给 一个 struct 写一个 cmp 函数.<br>并且, Rust 的比较并不是 bool 类型, 而是一个 枚举类型. 这一点的好处便是在项目工程代码中特别直观, 不好的地方就是在 算法竞赛方面要比其他语言多写一些代码, 时间上要多花费一些, 因此要更熟悉一些要好.</p>
+<h3 id="Enums-Ordering"><a href="#Enums-Ordering" class="headerlink" title="[Enums] Ordering"></a>[Enums] Ordering</h3><p>Rust 使用枚举体 <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/cmp/enum.Ordering.html">Ordering</a> 反应比较的大小.<br>这个枚举体会在后面的方法或函数或闭包中用到.</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">Ordering</span> &#123;<br>    Less,<br>    Equal,<br>    Greater,<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>Ordering 枚举体有三个 Variants, 分别代表比较的结果, 执行 <code>a.cmp(b)</code> :</p>
+<ol>
+<li><code>a &lt; b</code> : 返回 <code>Ordering::Less</code></li>
+<li><code>a = b</code> : 返回 <code>Ordering::Equal</code></li>
+<li><code>a &gt; b</code> : 返回 <code>Ordering::Greater</code></li>
+</ol>
+<div class="note note-primary">
+            <p>Ordering 枚举体往往作为核心函数的返回值进行比较判断</p>
+          </div>
+
+<h4 id="Ordering-类型可以转换为-bool-类型"><a href="#Ordering-类型可以转换为-bool-类型" class="headerlink" title="Ordering 类型可以转换为 bool 类型"></a>Ordering 类型可以转换为 bool 类型</h4><p>Rust 为 Ordering 枚举体实现了一些方法, 可以将 Ordering 转换为 bool.<br>判断并转为 bool 方法: <code>is_eq</code>, <code>is_ge</code>, <code>is_gt</code>, <code>is_le</code>, <code>is_lt</code>, <code>is_ne</code><br>还有反转函数: <code>reverse</code></p>
+<h3 id="Trait-PartialEq"><a href="#Trait-PartialEq" class="headerlink" title="[Trait] PartialEq"></a>[Trait] PartialEq</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">trait</span> <span class="hljs-title class_">PartialEq</span>&lt;Rhs = <span class="hljs-keyword">Self</span>&gt;<br><span class="hljs-keyword">where</span><br>    Rhs: ?<span class="hljs-built_in">Sized</span>,<br>&#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">eq</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;Rhs) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span>;<br><br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">ne</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;Rhs) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span> &#123; ... &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<div class="note note-primary">
+            <p><a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/cmp/trait.PartialEq.html"> PartialEq </a> 是 Rust 提供的偏等关系, 有默认实现方法 ne, 但需要实现 eq 函数.</p>
+          </div>
+<blockquote>
+<p>a &#x3D;&#x3D; b 是 a.eq(b) 的语法糖; a !&#x3D; b 是 a.ne(b) 的语法糖. 什么是偏等关系呢, 其实就是不保证 a &#x3D;&#x3D; a, 所有的整型数据都是全等的, 浮点型是偏等的, 只是因为 NaN !&#x3D; NaN. 也就是说 PartialEq 不保证自反性</p>
+</blockquote>
+<p>PartialEq 是一个泛型Trait, 这意味着可以实现两个不同的数据结构的判等.</p>
+<h3 id="Trait-Eq"><a href="#Trait-Eq" class="headerlink" title="[Trait] Eq"></a>[Trait] Eq</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">trait</span> <span class="hljs-title class_">Eq</span>: <span class="hljs-built_in">PartialEq</span>&lt;<span class="hljs-keyword">Self</span>&gt; &#123; &#125;<br></code></pre></td></tr></table></figure>
+<div class="note note-primary">
+            <p>可以看到, <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/cmp/trait.Eq.html">Eq</a> 就是简单承接自 PartialEq, 这意味着如果实现了 PartialEq 并且保证是全等关系(保证 自反性), 实现 Eq 不需要实现任何方法.</p>
+          </div>
+<p>举个例子:</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">enum</span> <span class="hljs-title class_">BookFormat</span> &#123; Paperback, Hardback, Ebook &#125;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Book</span> &#123;<br>    isbn: <span class="hljs-type">i32</span>,<br>    format: BookFormat,<br>&#125;<br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">PartialEq</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">Book</span> &#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">eq</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;<span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span> &#123;<br>        <span class="hljs-keyword">self</span>.isbn == other.isbn<br>    &#125;<br>&#125;<br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">Eq</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">Book</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="Trait-PartialOrd"><a href="#Trait-PartialOrd" class="headerlink" title="[Trait] PartialOrd"></a>[Trait] PartialOrd</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">trait</span> <span class="hljs-title class_">PartialOrd</span>&lt;Rhs = <span class="hljs-keyword">Self</span>&gt;: <span class="hljs-built_in">PartialEq</span>&lt;Rhs&gt;<br><span class="hljs-keyword">where</span><br>    Rhs: ?<span class="hljs-built_in">Sized</span>,<br>&#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">partial_cmp</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;Rhs) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Option</span>&lt;Ordering&gt;;<br><br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">lt</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;Rhs) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span> &#123; ... &#125;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">le</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;Rhs) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span> &#123; ... &#125;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">gt</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;Rhs) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span> &#123; ... &#125;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">ge</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;Rhs) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span> &#123; ... &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<div class="note note-primary">
+            <p><a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/cmp/trait.PartialOrd.html">PartialOrd</a> 是 Rust 提供的偏序关系, 需要实现 partial_cmp 方法, 其他方法有默认实现. partial_cmp 返回的是 Option<Ordering>.</p>
+          </div>
+
+<blockquote>
+<p>关于偏序关系, 可以查看 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Partially_ordered_set#Partial_order"> wiki </a>, 但是有个比较直观的理解: 偏序关系 不保证所有的元素都可以比较大小, 而 全序关系 需要保证所有排序的元素都可以比较.</p>
+</blockquote>
+<div class="note note-secondary">
+            <p>实现 PartialOrd 需要 实现 PartialEq, 并且依然是 泛型Trait, 意味着可以进行两个不同类型的比较.</p>
+          </div>
+
+<h3 id="Trait-Ord"><a href="#Trait-Ord" class="headerlink" title="[Trait] Ord"></a>[Trait] Ord</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">trait</span> <span class="hljs-title class_">Ord</span>: <span class="hljs-built_in">Eq</span> + <span class="hljs-built_in">PartialOrd</span>&lt;<span class="hljs-keyword">Self</span>&gt; &#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">cmp</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;<span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> Ordering;<br><br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">max</span>(<span class="hljs-keyword">self</span>, other: <span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span><br>    <span class="hljs-keyword">where</span><br>        <span class="hljs-keyword">Self</span>: <span class="hljs-built_in">Sized</span>,<br>    &#123; ... &#125;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">min</span>(<span class="hljs-keyword">self</span>, other: <span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span><br>    <span class="hljs-keyword">where</span><br>        <span class="hljs-keyword">Self</span>: <span class="hljs-built_in">Sized</span>,<br>    &#123; ... &#125;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">clamp</span>(<span class="hljs-keyword">self</span>, min: <span class="hljs-keyword">Self</span>, max: <span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-keyword">Self</span><br>    <span class="hljs-keyword">where</span><br>        <span class="hljs-keyword">Self</span>: <span class="hljs-built_in">Sized</span> + <span class="hljs-built_in">PartialOrd</span>&lt;<span class="hljs-keyword">Self</span>&gt;,<br>    &#123; ... &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<div class="note note-primary">
+            <p><a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/cmp/trait.Ord.html"> Ord </a> 是 Rust 提供的全序关系, 和 PartialOrd 唯一的区别是需要实现的 cmp 方法返回值是 Ordering, 这也意味着保证了所有元素都是可比较的, 因此 cmp 不会返回 Option.</p>
+          </div>
+<blockquote>
+<p>使用到的 BTreeSet&#x2F;BTreeMap 和 BinaryHeap 都需要实现到 Ord Trait, 因此比赛设计的数据结构一般也需要实现到 Ord Trait.</p>
+</blockquote>
+<h3 id="Struct-Reverse"><a href="#Struct-Reverse" class="headerlink" title="[Struct] Reverse"></a>[Struct] Reverse</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Reverse</span>&lt;T&gt;(<span class="hljs-keyword">pub</span> T);<br></code></pre></td></tr></table></figure>
+<p>这是一个 Rust 提供的反转默认比较结果的元组结构体.</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">let</span> (a, b) = (<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);<br><span class="hljs-built_in">assert_eq!</span>(a.<span class="hljs-title function_ invoke__">cmp</span>(&amp;b), Ordering::Less);<br><span class="hljs-built_in">assert_eq!</span>(<span class="hljs-title function_ invoke__">Reverse</span>(a).<span class="hljs-title function_ invoke__">cmp</span>(&amp;<span class="hljs-title function_ invoke__">Reverse</span>(b)), Ordering::Greater);<br></code></pre></td></tr></table></figure>
+<h2 id="复合数据结构比较"><a href="#复合数据结构比较" class="headerlink" title="复合数据结构比较"></a>复合数据结构比较</h2><h3 id="元组比较"><a href="#元组比较" class="headerlink" title="元组比较"></a>元组比较</h3><p>Rust 元组排序是没有办法自定义的, 只能根据 Rust 提供的规则进行:</p>
+<ol>
+<li>两个元组能比较, 需要两个元组具有相同结构, 即相同参数个数和类型.</li>
+<li>两个元组能进行偏序(partial_cmp)比较, 需要满足 第一条 并且 元素都实现 PartialOrd Trait.</li>
+<li>两个元组能进行全序(cmp)比较, 需要满足 第一条 并且 元素都实现 Ord Trait.</li>
+<li>可以使用 Reverse 结构体反转 部分 元素.</li>
+<li>可以使用 Reverse 结构体反转 全部 元素.</li>
+</ol>
+<p>下面将举一些例子进行阐述:</p>
+<h4 id="1-两个元组能比较-需要两个元组具有相同结构-即相同参数个数和类型"><a href="#1-两个元组能比较-需要两个元组具有相同结构-即相同参数个数和类型" class="headerlink" title="1. 两个元组能比较, 需要两个元组具有相同结构, 即相同参数个数和类型"></a>1. 两个元组能比较, 需要两个元组具有相同结构, 即相同参数个数和类型</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust">(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>).<span class="hljs-title function_ invoke__">cmp</span>(&amp;(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>));      <span class="hljs-comment">// ok</span><br>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>).<span class="hljs-title function_ invoke__">cmp</span>(&amp;(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>));   <span class="hljs-comment">// error: 参数个数不匹配</span><br>(<span class="hljs-number">1</span>, <span class="hljs-number">2i64</span>).<span class="hljs-title function_ invoke__">cmp</span>(&amp;(<span class="hljs-number">2</span>, <span class="hljs-number">3u8</span>)); <span class="hljs-comment">// error: 参数类型不匹配</span><br></code></pre></td></tr></table></figure>
+<h4 id="2-两个元组能进行偏序-partial-cmp-比较-需要满足-第一条-并且-元素都实现-PartialOrd-Trait"><a href="#2-两个元组能进行偏序-partial-cmp-比较-需要满足-第一条-并且-元素都实现-PartialOrd-Trait" class="headerlink" title="2. 两个元组能进行偏序(partial_cmp)比较, 需要满足 第一条 并且 元素都实现 PartialOrd Trait"></a>2. 两个元组能进行偏序(partial_cmp)比较, 需要满足 第一条 并且 元素都实现 PartialOrd Trait</h4><h4 id="3-两个元组能进行全序-cmp-比较-需要满足-第一条-并且-元素都实现-Ord-Trait"><a href="#3-两个元组能进行全序-cmp-比较-需要满足-第一条-并且-元素都实现-Ord-Trait" class="headerlink" title="3. 两个元组能进行全序(cmp)比较, 需要满足 第一条 并且 元素都实现 Ord Trait."></a>3. 两个元组能进行全序(cmp)比较, 需要满足 第一条 并且 元素都实现 Ord Trait.</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs rust">(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>).<span class="hljs-title function_ invoke__">partial_cmp</span>(&amp;(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>));       <span class="hljs-comment">// ok</span><br>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>).<span class="hljs-title function_ invoke__">cmp</span>(&amp;(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>));               <span class="hljs-comment">// ok</span><br><br>(<span class="hljs-number">1</span>, <span class="hljs-number">2.0</span>).<span class="hljs-title function_ invoke__">partial_cmp</span>(&amp;(<span class="hljs-number">1</span>, <span class="hljs-number">3.0</span>));   <span class="hljs-comment">//ok</span><br>(<span class="hljs-number">1</span>, <span class="hljs-number">2.0</span>).<span class="hljs-title function_ invoke__">cmp</span>(&amp;(<span class="hljs-number">1</span>, <span class="hljs-number">3.0</span>));           <span class="hljs-comment">// error: 浮点数没有实现 Ord Trait, 不能进行全序比较</span><br></code></pre></td></tr></table></figure>
+<h4 id="4-可以使用-Reverse-结构体反转-部分-元素"><a href="#4-可以使用-Reverse-结构体反转-部分-元素" class="headerlink" title="4. 可以使用 Reverse 结构体反转 部分 元素."></a>4. 可以使用 Reverse 结构体反转 部分 元素.</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">assert_eq!</span>((<span class="hljs-number">1</span>, <span class="hljs-number">2</span>).<span class="hljs-title function_ invoke__">cmp</span>(&amp;(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)), Ordering::Greater);<br><span class="hljs-built_in">assert_eq!</span>((<span class="hljs-number">1</span>, <span class="hljs-title function_ invoke__">Reverse</span>(<span class="hljs-number">2</span>)).<span class="hljs-title function_ invoke__">cmp</span>(&amp;(<span class="hljs-number">1</span>, <span class="hljs-title function_ invoke__">Reverse</span>(<span class="hljs-number">1</span>))), Ordering::Less);<br></code></pre></td></tr></table></figure>
+<h4 id="5-可以使用-Reverse-结构体反转-全部-元素"><a href="#5-可以使用-Reverse-结构体反转-全部-元素" class="headerlink" title="5. 可以使用 Reverse 结构体反转 全部 元素."></a>5. 可以使用 Reverse 结构体反转 全部 元素.</h4><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">assert_eq!</span>((<span class="hljs-number">1</span>, <span class="hljs-number">2</span>).<span class="hljs-title function_ invoke__">cmp</span>(&amp;(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)), Ordering::Greater);<br><span class="hljs-built_in">assert_eq!</span>(<span class="hljs-title function_ invoke__">Reverse</span>((<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)).<span class="hljs-title function_ invoke__">cmp</span>(&amp;(<span class="hljs-title function_ invoke__">Reverse</span>((<span class="hljs-number">1</span>, <span class="hljs-number">1</span>)))), Ordering::Less);<br></code></pre></td></tr></table></figure>
+<h3 id="结构体比较"><a href="#结构体比较" class="headerlink" title="结构体比较"></a>结构体比较</h3><p>一般结构体没有浮点类型的话, 是可以实现到 Ord Trait 的. 要想实现 Ord Trait, 也就要实现 PartialEq, Eq, PartialOrd 这三个 Trait.<br>举个官方文档的例子:</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">use</span> std::cmp::Ordering;<br><br><span class="hljs-meta">#[derive(Eq)]</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Person</span> &#123;<br>    id: <span class="hljs-type">u32</span>,<br>    name: <span class="hljs-type">String</span>,<br>    height: <span class="hljs-type">u32</span>,<br>&#125;<br><br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">Ord</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">Person</span> &#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">cmp</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;<span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> Ordering &#123;<br>        <span class="hljs-keyword">self</span>.height.<span class="hljs-title function_ invoke__">cmp</span>(&amp;other.height)<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">PartialOrd</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">Person</span> &#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">partial_cmp</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;<span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Option</span>&lt;Ordering&gt; &#123;<br>        <span class="hljs-title function_ invoke__">Some</span>(<span class="hljs-keyword">self</span>.<span class="hljs-title function_ invoke__">cmp</span>(other))<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">PartialEq</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">Person</span> &#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">eq</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;<span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span> &#123;<br>        <span class="hljs-keyword">self</span>.height == other.height<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>后面会介绍 结合 BTreeSet&#x2F;BTreeMap 和 BinaryHeap 的例子.</p>
+</blockquote>
+<h1 id="Sort-排序"><a href="#Sort-排序" class="headerlink" title="Sort 排序"></a>Sort 排序</h1><p>Rust 为可变切片提供的排序支持, sort* 为稳定排序, 实现为归并排序, unstable_sort* 为不稳定排序, 实现为快排的变形. 一般做题只需要使用 不稳定 的就好, 因为平均常数小很多. 但是这里使用 sort* 辅助描述排序规则.</p>
+<div class="note note-primary">
+            <p>Rust 中 sort* 和 unstable_sort* 都是 从小到大 进行排序. 即都是从 Ordering::Less 到 Ordering::Greater.</p>
+          </div>
+<h2 id="sort-排序"><a href="#sort-排序" class="headerlink" title="sort 排序"></a>sort 排序</h2><p>最基本的排序, 从小到大 排.<br>排序结果若为 <code>[a, b, c]</code>, 那么:</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs rust">a.<span class="hljs-title function_ invoke__">cmp</span>(&amp;b) <span class="hljs-punctuation">-&gt;</span> Ordering::Less<br>b.<span class="hljs-title function_ invoke__">cmp</span>(&amp;c) <span class="hljs-punctuation">-&gt;</span> Ordering::Less<br></code></pre></td></tr></table></figure>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">s</span> = [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>];<br>s.<span class="hljs-title function_ invoke__">sort</span>();<br><span class="hljs-built_in">assert_eq!</span>(s, [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>]);<br></code></pre></td></tr></table></figure>
+<h2 id="sort-by-排序"><a href="#sort-by-排序" class="headerlink" title="sort_by 排序"></a>sort_by 排序</h2><p>根据排序函数比较结果进行排序</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">sort_by</span>&lt;F&gt;(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, compare: F)<br><span class="hljs-keyword">where</span><br>    F: <span class="hljs-title function_ invoke__">FnMut</span>(&amp;T, &amp;T) <span class="hljs-punctuation">-&gt;</span> Ordering,<br></code></pre></td></tr></table></figure>
+<p>可以发现该闭包函数接受两个参数, 分别代表两个元素, 第一个设为 first, 第二个为 second.</p>
+<ol>
+<li>如果 闭包函数 返回 Ordering::Less, 那么 排序结果将为 [first, second];</li>
+<li>如果 闭包函数 返回 Ordering::Greater, 那么 排序结果将为 [second, first];</li>
+<li>如果 闭包函数 返回 Ordering::Equal, 那么稳定排序则一定按照顺序, 不稳定排序不保证顺序.</li>
+</ol>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">s</span> = [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>];<br>s.<span class="hljs-title function_ invoke__">sort_by</span>(|a, b| a.<span class="hljs-title function_ invoke__">cmp</span>(&amp;b));<br><span class="hljs-built_in">assert_eq!</span>(s, [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>]);<br></code></pre></td></tr></table></figure>
+<p>那如何利用 sort_by 函数从到到小排序呢? 根据上述三条规则, 很容易设计出一些满足的方法:<br>下面给出是是三个方式, 核心思想都是 <strong>反转前后比较结果</strong>:</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">s</span> = [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>];<br>s.<span class="hljs-title function_ invoke__">sort_by</span>(|a, b| <span class="hljs-keyword">match</span> a.<span class="hljs-title function_ invoke__">cmp</span>(&amp;b) &#123;<br>    Ordering::Less =&gt; Ordering::Greater,<br>    Ordering::Equal =&gt; Ordering::Equal,<br>    Ordering::Greater =&gt; Ordering::Less,<br>&#125;);<br><span class="hljs-built_in">assert_eq!</span>(s, [<span class="hljs-number">5</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]);<br></code></pre></td></tr></table></figure>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">s</span> = [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>];<br>s.<span class="hljs-title function_ invoke__">sort_by</span>(|a, b| b.<span class="hljs-title function_ invoke__">cmp</span>(&amp;a));<br><span class="hljs-built_in">assert_eq!</span>(s, [<span class="hljs-number">5</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]);<br></code></pre></td></tr></table></figure>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">s</span> = [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>];<br>s.<span class="hljs-title function_ invoke__">sort_by</span>(|a, b| <span class="hljs-title function_ invoke__">Reverse</span>(a).<span class="hljs-title function_ invoke__">cmp</span>(&amp;<span class="hljs-title function_ invoke__">Reverse</span>(b)));<br><span class="hljs-built_in">assert_eq!</span>(s, [<span class="hljs-number">5</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]);<br></code></pre></td></tr></table></figure>
+
+<h2 id="sort-by-key-排序"><a href="#sort-by-key-排序" class="headerlink" title="sort_by_key 排序"></a>sort_by_key 排序</h2><p>Rust 提供的根据一个键值key 进行排序. 闭包函数要做的就是把一个元素转为一个实现 Ord Trait 的 key.<br>然后 Rust 会根据 key 值 从小到大 进行排序.</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">sort_by_key</span>&lt;K, F&gt;(&amp;<span class="hljs-keyword">mut</span> <span class="hljs-keyword">self</span>, f: F)<br><span class="hljs-keyword">where</span><br>    F: <span class="hljs-title function_ invoke__">FnMut</span>(&amp;T) <span class="hljs-punctuation">-&gt;</span> K,<br>    K: <span class="hljs-built_in">Ord</span>,<br></code></pre></td></tr></table></figure>
+<p><strong>使用 sort_by_key 实现从小到大排序</strong>.</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">s</span> = [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>];<br>s.<span class="hljs-title function_ invoke__">sort_by_key</span>(|v| -v);<br><span class="hljs-built_in">assert_eq!</span>(s, [<span class="hljs-number">5</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]);<br><br><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">s</span> = [<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>];<br>s.<span class="hljs-title function_ invoke__">sort_by_key</span>(|v| <span class="hljs-title function_ invoke__">Reverse</span>(*v));<br><span class="hljs-built_in">assert_eq!</span>(s, [<span class="hljs-number">5</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]);<br></code></pre></td></tr></table></figure>
+
+<h1 id="Rust-需要设计排序数据结构"><a href="#Rust-需要设计排序数据结构" class="headerlink" title="Rust 需要设计排序数据结构"></a>Rust 需要设计排序数据结构</h1><p>其实这块和 Sort 排序类似, 只需要明白各自的数据结构是按照什么规则进行排序的.</p>
+<h2 id="BTreeset-BTreeMap-平衡树"><a href="#BTreeset-BTreeMap-平衡树" class="headerlink" title="BTreeset&#x2F;BTreeMap 平衡树"></a>BTreeset&#x2F;BTreeMap 平衡树</h2><p>平衡树是从小到大排的. 所以，平衡树和排序是很像的.</p>
+<p>一个简单的例子:</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">use</span> std::collections::BTreeSet;<br><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">b</span> = BTreeSet::<span class="hljs-title function_ invoke__">from</span>([<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>]);<br><span class="hljs-built_in">assert_eq!</span>(b.<span class="hljs-title function_ invoke__">into_iter</span>().collect::&lt;<span class="hljs-type">Vec</span>&lt;_&gt;&gt;(), [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>]);<br></code></pre></td></tr></table></figure>
+
+<p>我们设计一个三元组结构体, 该结构体的比较规则仅仅按照中间元素进行判断.</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-meta">#[derive(Debug)]</span><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Pair</span>(<span class="hljs-type">i32</span>, <span class="hljs-type">i32</span>, <span class="hljs-type">i32</span>);<br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">PartialEq</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">Pair</span> &#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">eq</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;<span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">bool</span> &#123;<br>        <span class="hljs-keyword">self</span>.<span class="hljs-number">0</span> == other.<span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">self</span>.<span class="hljs-number">1</span> == other.<span class="hljs-number">1</span> &amp;&amp; <span class="hljs-keyword">self</span>.<span class="hljs-number">2</span> == other.<span class="hljs-number">2</span><br>    &#125;<br>&#125;<br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">Eq</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">Pair</span> &#123;&#125;<br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">Ord</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">Pair</span> &#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">cmp</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;<span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> Ordering &#123;<br>        <span class="hljs-keyword">self</span>.<span class="hljs-number">1</span>.<span class="hljs-title function_ invoke__">cmp</span>(&amp;other.<span class="hljs-number">1</span>)<br>    &#125;<br>&#125;<br><span class="hljs-keyword">impl</span> <span class="hljs-title class_">PartialOrd</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">Pair</span> &#123;<br>    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">partial_cmp</span>(&amp;<span class="hljs-keyword">self</span>, other: &amp;<span class="hljs-keyword">Self</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Option</span>&lt;Ordering&gt; &#123;<br>        <span class="hljs-title function_ invoke__">Some</span>(<span class="hljs-keyword">self</span>.<span class="hljs-title function_ invoke__">cmp</span>(other))<br>    &#125;<br>&#125;<br><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">b</span>: BTreeSet&lt;Pair&gt; = BTreeSet::<span class="hljs-title function_ invoke__">new</span>();<br>b.<span class="hljs-title function_ invoke__">insert</span>(<span class="hljs-title function_ invoke__">Pair</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>));<br>b.<span class="hljs-title function_ invoke__">insert</span>(<span class="hljs-title function_ invoke__">Pair</span>(<span class="hljs-number">9</span>, <span class="hljs-number">1</span>, <span class="hljs-number">4</span>));<br>b.<span class="hljs-title function_ invoke__">insert</span>(<span class="hljs-title function_ invoke__">Pair</span>(<span class="hljs-number">7</span>, <span class="hljs-number">4</span>, <span class="hljs-number">2</span>));<br><span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;&#123;:?&#125;&quot;</span>, b);<br><span class="hljs-comment">// -- 输出</span><br><span class="hljs-comment">// &#123;Pair(9, 1, 4), Pair(1, 2, 3), Pair(7, 4, 2)&#125;</span><br></code></pre></td></tr></table></figure>
+<h2 id="BinaryHeap-堆"><a href="#BinaryHeap-堆" class="headerlink" title="BinaryHeap 堆"></a>BinaryHeap 堆</h2><p>Rust 提供的优先队列, 默认大顶堆.</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">use</span> std::collections::BinaryHeap;<br><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">b</span> = BinaryHeap::<span class="hljs-title function_ invoke__">from</span>([<span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>]);<br><span class="hljs-keyword">while</span> <span class="hljs-keyword">let</span> <span class="hljs-variable">Some</span>(peak) = b.<span class="hljs-title function_ invoke__">pop</span>() &#123;<br>    <span class="hljs-built_in">print!</span>(<span class="hljs-string">&quot;&#123;:?&#125;\t&quot;</span>, peak);<br>&#125;<br><span class="hljs-comment">// -- 输出</span><br><span class="hljs-comment">// 5   4   3   2   1</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>那如何实现小顶堆呢? 根据前面的讲述, 这里应该有思路了, 留作读者思考.</p>
+</blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>sort 按照 <code>Ordering::Less -&gt; Ordering::Greater</code></li>
+<li>BTreeSet&#x2F;BTreeMap 按照 <code>Ordering::Less -&gt; Ordering::Greater</code></li>
+<li>BinaryHeap按照 <code>Ordering::Greater -&gt; Ordering::Less</code></li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Rust/" class="category-chain-item">Rust</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Rust/ACM/" class="category-chain-item">ACM</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Rust%E5%9F%BA%E7%A1%80/" class="print-no-link">#Rust基础</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Rust-数据比较和排序</div>
+      <div>https://oliverchao.github.io/2022/12/31/Rust-数据比较和排序/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Oliver</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="SA - 相同方式共享">
+                    <i class="iconfont icon-sa"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/03/LC-2518%E5%A5%BD%E5%88%86%E5%8C%BA%E7%9A%84%E6%95%B0%E7%9B%AE/" title="LC-2518好分区的数目">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">LC-2518好分区的数目</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/14/LC-1697-%E6%A3%80%E6%9F%A5%E8%BE%B9%E9%95%BF%E5%BA%A6%E9%99%90%E5%88%B6%E7%9A%84%E8%B7%AF%E5%BE%84%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8/" title="LC.1697.检查边长度限制的路径是否存在">
+                        <span class="hidden-mobile">LC.1697.检查边长度限制的路径是否存在</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.1/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
